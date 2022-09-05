@@ -193,14 +193,14 @@ const CategoryMasters = () => {
                   marginTop: '30px',
                 }}
               >
-                <label>Course</label>
+                <label>Entity Name</label>
 
                 <Select
                   style={{
                     width: '100%',
                   }}
                 >
-                  <MenuItem>Sample Category</MenuItem>
+                  <MenuItem>Sample Entity</MenuItem>
                 </Select>
               </Grid>
               <Grid item>
