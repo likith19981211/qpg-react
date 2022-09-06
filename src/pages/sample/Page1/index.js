@@ -51,6 +51,7 @@ const Page1 = () => {
   //Deleting a record
   const deleteData = (id) => {
     try {
+        console.log(id);
        let cid = id.data.id;
 
       axios.delete(`http://localhost:8080/api/college-masters/${cid}`, {

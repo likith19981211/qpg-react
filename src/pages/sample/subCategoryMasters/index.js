@@ -43,8 +43,8 @@ const SubCategoryMasters = () => {
       .then((res) => setData(res));
   };
 
-  useEffect(async () => {
-    await fetchData();
+  useEffect( () => {
+     fetchData();
   }, []);
 
   //Deleting sub-category-master data

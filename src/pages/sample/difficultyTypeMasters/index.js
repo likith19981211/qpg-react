@@ -31,8 +31,8 @@ const DifficultyTypeMasters = () => {
       .then((res) => setData(res));
   };
 
-  useEffect(async () => {
-    await fetchData();
+  useEffect( () => {
+     fetchData();
   }, []);
 
   //Deleting difficulty-type-master

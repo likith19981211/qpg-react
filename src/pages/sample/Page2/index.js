@@ -3,7 +3,7 @@ import React, {useEffect, useState} from 'react';
 import MaterialTable, {MTableToolbar} from 'material-table';
 import Button from '@mui/material/Button';
 import {Card, CardContent, Grid, Modal, TextField} from '@mui/material';
-import Select from '@mui/material/Select/Select';
+//import Select from '@mui/material/Select/Select';
 import MenuItem from '@mui/material/MenuItem';
 import axios from 'axios';
 //import axios from 'axios';
@@ -14,7 +14,7 @@ const Page2 = () => {
   const [name, setName] = useState('');
   const [open, setOpen] = useState(false);
   const [college, setCollege] = useState([]);
-  const [selectedCollege, setSelectedCollege] = useState();
+  const [collegeMaster, setCollegeMaster] = useState('');
 
   const columns = [
     {
@@ -31,20 +31,45 @@ const Page2 = () => {
 
   //select college from dropdown
   //   const selectCollege = (e) => {
-  //       setSelectedCollege({
+  //       setCollegeMaster({
   //           [e.target.name] : (e.target.value)
   //       });
-  //       console.log(selectedCollege);
+  //       console.log(collegeMaster);
   //   };
 
   //Fetch college-master data
-  const fetchCollege = async () => {
-    fetch('http://localhost:8080/api/college-masters')
-      .then((res) => res.json())
-      .then((res) => {
-        console.log(college);
-        setCollege(res);
-      });
+  // const fetchCollege = async () => {
+  //   fetch('http://localhost:8080/api/college-masters')
+  //     .then((res) => res.json())
+  //     .then((res) => {
+  //       console.log(college);
+  //       setCollege(res);
+  //     });
+  // };
+
+  //Adding a college
+  const addDepartment = (e) => {
+    e.preventDefault();
+    try {
+      console.log(name);
+      console.log(collegeMaster);
+      axios
+        .post('http://localhost:8080/api/department-masters', {
+          name,
+          collegeMaster,
+        })
+        .then((res) => res.data)
+        .then((res) => console.log(res.data));
+        fetchData();
+      setName('');
+      setOpen(false);
+
+      setName('');
+      setCollegeMaster('');
+
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   //Fetching department-masters data
@@ -74,9 +99,17 @@ const Page2 = () => {
     }
   };
 
-  useEffect(async () => {
-    await fetchData();
-    await fetchCollege();
+  useEffect(() => {
+    async function fetchCollege() {
+      await fetch('http://localhost:8080/api/college-masters')
+        .then((res) => res.json())
+        .then((res) => {
+          console.log(college);
+          setCollege(res);
+        });
+    }
+    fetchData();
+    fetchCollege();
   }, []);
 
   return (
@@ -136,27 +169,6 @@ const Page2 = () => {
             </>
           ),
         }}
-        // editable={{
-        //     onRowUpdate: (newData, oldData) => new Promise((resolve, reject) => {
-        //        fetch("http://localhost:8080/api"+"/"+oldData.id, {
-        //            method: 'put',
-        //            headers: {
-        //                'Content-Type' : 'application/json'
-        //            },
-        //            body: JSON.stringify(newData)
-        //        }).then(resp => resp.json())
-        //            .then(resp => {
-        //                fetchData();
-        //            if(resp.data){
-        //                resolve();
-        //            }else {
-        //                reject();
-        //            }
-        //            console.log(resp.data);
-        //            });
-        //
-        //     })
-        // }}
         options={{
           search: true,
           searchFieldAlignment: 'left',
@@ -231,16 +243,13 @@ const Page2 = () => {
               >
                 <label>College</label>
 
-                <Select
-                  id='selectedCollege'
-                  defaultValue=''
-                  value={selectedCollege}
-                  name='selectedCollege'
+                <TextField
+                  select
+                  value={collegeMaster}
+                  name='collegeMaster'
                   onChange={(e) => {
-                    setSelectedCollege({
-                      [e.target.name]: e.target.value,
-                    });
-                    console.log(selectedCollege);
+                    setCollegeMaster(e.target.value);
+                    console.log('collegeMaster', collegeMaster);
                   }}
                   style={{
                     width: '100%',
@@ -248,12 +257,12 @@ const Page2 = () => {
                 >
                   {college.map((result) => {
                     return (
-                      <MenuItem key={result.id} value={result.name}>
+                      <MenuItem key={result.id} value={result}>
                         {result.name}
                       </MenuItem>
                     );
                   })}
-                </Select>
+                </TextField>
               </Grid>
               <Grid item>
                 <div
@@ -272,7 +281,7 @@ const Page2 = () => {
                     }}
                     color='primary'
                     variant='contained'
-                    //   onClick={addDepartment}
+                    onClick={addDepartment}
                   >
                     Save
                   </Button>

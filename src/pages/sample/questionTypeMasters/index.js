@@ -34,8 +34,8 @@ const QuestionTypeMasters = () => {
       .then((res) => setData(res));
   };
 
-  useEffect(async () => {
-    await fetchData();
+  useEffect( () => {
+     fetchData();
   }, []);
 
   //Deleting question-type-master

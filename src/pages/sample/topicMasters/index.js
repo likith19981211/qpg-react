@@ -59,8 +59,8 @@ const TopicMasters = () => {
       .then((res) => setData(res));
   };
 
-  useEffect(async () => {
-    await fetchData();
+  useEffect( () => {
+     fetchData();
   }, []);
 
   //Deleting topic-master

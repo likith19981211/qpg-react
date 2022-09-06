@@ -40,8 +40,8 @@ const CategoryMasters = () => {
   };
 
 
-  useEffect(async () => {
-    await fetchData();
+  useEffect( () => {
+     fetchData();
   }, []);
 
 
