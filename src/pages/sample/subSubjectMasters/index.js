@@ -4,7 +4,7 @@ import MaterialTable, {MTableToolbar} from 'material-table';
 import axios from "axios";
 import Button from "@mui/material/Button";
 import {Card, CardContent, Grid, Modal, TextField} from "@mui/material";
-import Select from "@mui/material/Select/Select";
+//import Select from "@mui/material/Select/Select";
 import MenuItem from "@mui/material/MenuItem";
 //import axios from 'axios';
 //axios.defaults.withCredentials = true;
@@ -13,6 +13,9 @@ const SubSubjectMasters = () => {
   const [data, setData] = useState([]);
   const [name, setName] = useState('');
   const [open, setOpen] = useState(false);
+  const [subject, setSubject] = useState([]);
+  const [subjectMaster, setSubjectMaster] = useState('');
+
 
   const columns = [
     {
@@ -53,8 +56,39 @@ const SubSubjectMasters = () => {
   };
 
   useEffect( () => {
+      async function fetchSubject() {
+          await fetch('http://localhost:8080/api/subject-masters')
+              .then((res) => res.json())
+              .then((res) => {
+                  console.log(subject);
+                  setSubject(res);
+              });
+      }
      fetchData();
+      fetchSubject();
   }, []);
+
+    //Adding a sub-subject-master
+    const addSubSubject = (e) => {
+        e.preventDefault();
+        try {
+            console.log(name);
+            console.log(subjectMaster);
+            axios
+                .post('http://localhost:8080/api/sub-subject-masters', {
+                    name,
+                    subjectMaster,
+                })
+                .then((res) => res.data)
+                .then((res) => console.log(res.data));
+            fetchData();
+            setName('');
+            setSubjectMaster('');
+            setOpen(false);
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
   //Deleting sub-category-master data
   const deleteData = (id) => {
@@ -208,15 +242,30 @@ const SubSubjectMasters = () => {
                     marginTop: '30px',
                   }}
               >
-                <label>Entity Name</label>
+                <label>Select Subject</label>
 
-                <Select
+                <TextField
+                    select
+                    value={subjectMaster}
+                    name = 'subjectMaster'
+                    onChange={(e) => {
+                        setSubjectMaster(e.target.value);
+                        console.log('subjectMaster', subjectMaster);
+                    }}
                     style={{
                       width: '100%',
                     }}
                 >
-                  <MenuItem>Sample Entity</MenuItem>
-                </Select>
+                    {
+                        subject.map((result) => {
+                            return (
+                                <MenuItem key={result.id} value={result}>
+                                    {result.name}
+                                </MenuItem>
+                            );
+                        })
+                    }
+                </TextField>
               </Grid>
               <Grid item>
                 <div
@@ -235,7 +284,7 @@ const SubSubjectMasters = () => {
                       }}
                       color='primary'
                       variant='contained'
-                      //   onClick={addDepartment}
+                         onClick={addSubSubject}
                   >
                     Save
                   </Button>

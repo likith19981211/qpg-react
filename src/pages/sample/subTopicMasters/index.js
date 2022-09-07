@@ -3,7 +3,7 @@ import React, {useEffect, useState} from 'react';
 import MaterialTable, {MTableToolbar} from 'material-table';
 import Button from "@mui/material/Button";
 import {Card, CardContent, Grid, Modal, TextField} from "@mui/material";
-import Select from "@mui/material/Select/Select";
+//import Select from "@mui/material/Select/Select";
 import MenuItem from "@mui/material/MenuItem";
 import axios from "axios";
 //axios.defaults.withCredentials = true;
@@ -12,6 +12,8 @@ const SubTopicMasters = () => {
   const [data, setData] = useState([]);
   const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
+  const [topic, setTopic] = useState([]);
+  const [topicMaster, setTopicMaster] = useState('');
 
   const columns = [
     {
@@ -53,7 +55,7 @@ const SubTopicMasters = () => {
     },
   ];
 
-  //Fetching topic-master data
+  //Fetching sub-topic-master data
   const fetchData = () => {
     fetch('http://localhost:8080/api/sub-topic-masters', {
       withCredentials: true,
@@ -63,8 +65,39 @@ const SubTopicMasters = () => {
   };
 
   useEffect( () => {
+      async function fetchTopic() {
+          await fetch('http://localhost:8080/api/topic-masters')
+              .then((res) => res.json())
+              .then((res) => {
+                  console.log(topic);
+                  setTopic(res);
+              });
+      }
      fetchData();
+      fetchTopic();
   }, []);
+
+    //Adding a sub-topic-master
+    const addSubTopic = (e) => {
+        e.preventDefault();
+        try {
+            console.log(name);
+            console.log(topicMaster);
+            axios
+                .post('http://localhost:8080/api/sub-topic-masters', {
+                    name,
+                    topicMaster,
+                })
+                .then((res) => res.data)
+                .then((res) => console.log(res.data));
+            fetchData();
+            setName('');
+            setTopicMaster('');
+            setOpen(false);
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
   //Deleting topic-master
   const deleteData = (id) => {
@@ -194,7 +227,7 @@ const SubTopicMasters = () => {
                   }}
               >
                 <TextField
-                    placeholder='Enter Topic Name'
+                    placeholder='Enter Sub-Topic'
                     name='name'
                     value={name}
                     onChange={(e) => setName(e.target.value)}
@@ -212,15 +245,30 @@ const SubTopicMasters = () => {
                     marginTop: '30px',
                   }}
               >
-                <label>Entity Name</label>
+                <label>Topic</label>
 
-                <Select
+                <TextField
+                    select
+                    value={topicMaster}
+                    name= 'topicMaster'
+                    onChange={(e) => {
+                        setTopicMaster(e.target.value);
+                        console.log('topicMaster', topicMaster);
+                    }}
                     style={{
                       width: '100%',
                     }}
                 >
-                  <MenuItem>Sample Entity</MenuItem>
-                </Select>
+                    {
+                        topic.map((result) => {
+                            return (
+                                <MenuItem key={result.id} value={result}>
+                                    {result.name}
+                                </MenuItem>
+                            );
+                        })
+                    }
+                </TextField>
               </Grid>
               <Grid item>
                 <div
@@ -239,7 +287,7 @@ const SubTopicMasters = () => {
                       }}
                       color='primary'
                       variant='contained'
-                      //   onClick={addDepartment}
+                         onClick={addSubTopic}
                   >
                     Save
                   </Button>

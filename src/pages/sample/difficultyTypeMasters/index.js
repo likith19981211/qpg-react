@@ -4,8 +4,8 @@ import MaterialTable, {MTableToolbar} from 'material-table';
 import axios from 'axios';
 import Button from '@mui/material/Button';
 import {Card, CardContent, Grid, Modal, TextField} from '@mui/material';
-import Select from '@mui/material/Select/Select';
-import MenuItem from '@mui/material/MenuItem';
+// import Select from '@mui/material/Select/Select';
+// import MenuItem from '@mui/material/MenuItem';
 //import axios from 'axios';
 //axios.defaults.withCredentials = true;
 
@@ -34,6 +34,25 @@ const DifficultyTypeMasters = () => {
   useEffect( () => {
      fetchData();
   }, []);
+
+    //Add a difficulty-type
+    const addDifficultyType = (e) => {
+        e.preventDefault();
+        try {
+            console.log(name);
+            axios
+                .post('http://localhost:8080/api/difficulty-type-masters', {
+                    name,
+                })
+                .then((res) => res.data)
+                .then((res) => console.log(res.data));
+            setName('');
+            setOpen(false);
+            fetchData();
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
   //Deleting difficulty-type-master
   const deleteData = (id) => {
@@ -136,7 +155,7 @@ const DifficultyTypeMasters = () => {
         <Card
           sx={{
             maxWidth: 370,
-            minHeight: {xs: 250, sm: 300},
+            minHeight: {xs: 150, sm: 250},
             width: '100%',
             overflow: 'hidden',
             position: 'relative',
@@ -172,23 +191,6 @@ const DifficultyTypeMasters = () => {
                 />
               </Grid>
 
-              <Grid
-                item
-                style={{
-                  width: '300px',
-                  marginTop: '30px',
-                }}
-              >
-                <label>Entity Name</label>
-
-                <Select
-                  style={{
-                    width: '100%',
-                  }}
-                >
-                  <MenuItem>Sample Entity</MenuItem>
-                </Select>
-              </Grid>
               <Grid item>
                 <div
                   style={{
@@ -206,7 +208,7 @@ const DifficultyTypeMasters = () => {
                     }}
                     color='primary'
                     variant='contained'
-                    //   onClick={addDepartment}
+                       onClick={addDifficultyType}
                   >
                     Save
                   </Button>

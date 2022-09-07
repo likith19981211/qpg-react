@@ -11,7 +11,9 @@ import {Card, CardContent, Grid, TextField} from '@mui/material';
 const Page1 = () => {
   const [data, setData] = useState([]);
   const [open, setOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
   const [name, setName] = useState('');
+
   const columns = [
     {
       title: 'ID',
@@ -67,6 +69,20 @@ const Page1 = () => {
     }
   };
 
+
+    const getCollege = (id) => {
+        let cid = id.data.id;
+        axios.get(`http://localhost:8080/api/college-masters/${cid}`)
+            .then(res => {
+                res.data;
+            console.log(res);
+                setEditOpen(true);
+                setName(res.data.name);
+                console.log(res.data.name);
+            });
+    };
+
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -114,7 +130,7 @@ const Page1 = () => {
                 variant='contained'
                 style={{textTransform: 'none'}}
                 size='small'
-                onClick={() => console.log('edit')}
+                onClick={() => getCollege(id)}
               >
                 Edit
               </Button>
@@ -130,27 +146,7 @@ const Page1 = () => {
             </>
           ),
         }}
-        // editable={{
-        //     onRowUpdate: (newData, oldData) => new Promise((resolve, reject) => {
-        //        fetch("http://localhost:8080/api"+"/"+oldData.id, {
-        //            method: 'put',
-        //            headers: {
-        //                'Content-Type' : 'application/json'
-        //            },
-        //            body: JSON.stringify(newData)
-        //        }).then(resp => resp.json())
-        //            .then(resp => {
-        //                fetchData();
-        //            if(resp.data){
-        //                resolve();
-        //            }else {
-        //                reject();
-        //            }
-        //            console.log(resp.data);
-        //            });
-        //
-        //     })
-        // }}
+
         options={{
           search: true,
           searchFieldAlignment: 'left',
@@ -252,6 +248,94 @@ const Page1 = () => {
           </CardContent>
         </Card>
       </Modal>
+
+        <Modal
+            open={editOpen}
+            onClose={() => setEditOpen(false)}
+            style={{
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+            }}
+        >
+            <Card
+                sx={{
+                    maxWidth: 370,
+                    minHeight: {xs: 150, sm: 250},
+                    width: '100%',
+                    overflow: 'hidden',
+                    position: 'relative',
+                    display: 'flex',
+                }}
+            >
+                <CardContent>
+                    <Grid
+                        container
+                        style={{
+                            display: 'flex',
+                            marginLeft: '20px',
+                            marginTop: '30px',
+                            marginRight: '10px',
+                        }}
+                    >
+                        <label>College</label>
+                        <Grid
+                            item
+                            style={{
+                                width: '100%',
+                            }}
+                        >
+                            <TextField
+                                placeholder='Enter College Name'
+                                name='name'
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                variant='outlined'
+                                style={{
+                                    width: '300px',
+                                }}
+                            />
+                        </Grid>
+                        <Grid item>
+                            <div
+                                style={{
+                                    marginTop: '30px',
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    justifyContent: 'space-evenly',
+                                }}
+                            >
+                                <Button
+                                    style={{
+                                        height: '40px',
+                                        width: '130px',
+                                        marginRight: '20px',
+                                    }}
+                                    color='primary'
+                                    variant='contained'
+                                    onClick={() => console.log(name)}
+                                >
+                                    Save
+                                </Button>
+                                <Button
+                                    style={{
+                                        height: '40px',
+                                        width: '130px',
+                                        marginLeft: '20px',
+                                    }}
+                                    color='secondary'
+                                    variant='contained'
+                                    onClick={() => setEditOpen(false)}
+                                >
+                                    Cancel
+                                </Button>
+                            </div>
+                        </Grid>
+                    </Grid>
+                </CardContent>
+            </Card>
+        </Modal>
     </div>
   );
 };

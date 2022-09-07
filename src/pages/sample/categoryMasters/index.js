@@ -3,7 +3,7 @@ import React, {useEffect, useState} from 'react';
 import MaterialTable, {MTableToolbar} from 'material-table';
 import Button from '@mui/material/Button';
 import {Card, CardContent, Grid, Modal, TextField} from '@mui/material';
-import Select from '@mui/material/Select/Select';
+//import Select from '@mui/material/Select/Select';
 import MenuItem from '@mui/material/MenuItem';
 import axios from 'axios';
 //import axios from 'axios';
@@ -13,6 +13,8 @@ const CategoryMasters = () => {
   const [data, setData] = useState([]);
   const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
+  const [course, setCourse] = useState([]);
+  const [courseMaster, setCourseMaster] = useState('');
 
   const columns = [
     {
@@ -39,11 +41,40 @@ const CategoryMasters = () => {
       .then((res) => setData(res));
   };
 
-
-  useEffect( () => {
-     fetchData();
+  useEffect(() => {
+    async function fetchCourse() {
+      await fetch('http://localhost:8080/api/course-masters')
+        .then((res) => res.json())
+        .then((res) => {
+          console.log(course);
+          setCourse(res);
+        });
+    }
+    fetchData();
+    fetchCourse();
   }, []);
 
+  //Adding a category-master
+  const addCategory = (e) => {
+    e.preventDefault();
+    try {
+      console.log(name);
+      console.log(courseMaster);
+      axios
+        .post('http://localhost:8080/api/category-masters', {
+          name,
+          courseMaster,
+        })
+        .then((res) => res.data)
+        .then((res) => console.log(res.data));
+      fetchData();
+      setName('');
+      setCourseMaster('');
+      setOpen(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   //Deleting category-master
   const deleteData = (id) => {
@@ -193,15 +224,28 @@ const CategoryMasters = () => {
                   marginTop: '30px',
                 }}
               >
-                <label>Entity Name</label>
+                <label>Select Course</label>
 
-                <Select
+                <TextField
+                  select
+                  value={courseMaster}
+                  name='courseMaster'
+                  onChange={(e) => {
+                    setCourseMaster(e.target.value);
+                    console.log('courseMaster', courseMaster);
+                  }}
                   style={{
                     width: '100%',
                   }}
                 >
-                  <MenuItem>Sample Entity</MenuItem>
-                </Select>
+                  {course.map((result) => {
+                    return (
+                      <MenuItem key={result.id} value={result}>
+                        {result.name}
+                      </MenuItem>
+                    );
+                  })}
+                </TextField>
               </Grid>
               <Grid item>
                 <div
@@ -220,7 +264,7 @@ const CategoryMasters = () => {
                     }}
                     color='primary'
                     variant='contained'
-                    //   onClick={addDepartment}
+                    onClick={addCategory}
                   >
                     Save
                   </Button>
@@ -242,6 +286,7 @@ const CategoryMasters = () => {
           </CardContent>
         </Card>
       </Modal>
+
     </div>
   );
 };

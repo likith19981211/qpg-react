@@ -3,7 +3,7 @@ import React, {useEffect, useState} from 'react';
 import MaterialTable, {MTableToolbar} from 'material-table';
 import Button from '@mui/material/Button';
 import {Card, CardContent, Grid, Modal, TextField} from '@mui/material';
-import Select from '@mui/material/Select/Select';
+//import Select from '@mui/material/Select/Select';
 import MenuItem from '@mui/material/MenuItem';
 import axios from 'axios';
 //import axios from 'axios';
@@ -13,6 +13,9 @@ const TopicMasters = () => {
   const [data, setData] = useState([]);
   const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
+  const [subSubject, setSubSubject] = useState([]);
+  const [subSubjectMaster, setSubSubjectMaster] = useState('');
+  const [shortCode, setShortCode] = useState('');
 
   const columns = [
     {
@@ -60,8 +63,40 @@ const TopicMasters = () => {
   };
 
   useEffect( () => {
+      async function fetchSubSubject() {
+          await fetch('http://localhost:8080/api/sub-subject-masters')
+              .then((res) => res.json())
+              .then((res) => {
+                  console.log(subSubject);
+                  setSubSubject(res);
+              });
+      }
      fetchData();
+      fetchSubSubject();
   }, []);
+
+    //Adding a topic-master
+    const addTopic = (e) => {
+        e.preventDefault();
+        try {
+            console.log(name);
+            console.log(subSubjectMaster);
+            axios
+                .post('http://localhost:8080/api/topic-masters', {
+                    name,
+                    shortCode,
+                    subSubjectMaster,
+                })
+                .then((res) => res.data)
+                .then((res) => console.log(res.data));
+            fetchData();
+            setName('');
+            setSubSubjectMaster('');
+            setOpen(false);
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
   //Deleting topic-master
   const deleteData = (id) => {
@@ -167,7 +202,7 @@ const TopicMasters = () => {
         <Card
           sx={{
             maxWidth: 370,
-            minHeight: {xs: 250, sm: 300},
+            minHeight: {xs: 350, sm: 400},
             width: '100%',
             overflow: 'hidden',
             position: 'relative',
@@ -210,16 +245,51 @@ const TopicMasters = () => {
                   marginTop: '30px',
                 }}
               >
-                <label>Entity Name</label>
+                <label>Select Sub-Subject</label>
 
-                <Select
+                <TextField
+                    select
+                    value={subSubjectMaster}
+                    name = 'subSubjectMaster'
+                    onChange={(e) => {
+                        setSubSubjectMaster(e.target.value);
+                        console.log('subSubjectMaster', subSubjectMaster);
+                    }}
                   style={{
                     width: '100%',
                   }}
                 >
-                  <MenuItem>Sample Entity</MenuItem>
-                </Select>
+                    {
+                        subSubject.map((result) => {
+                            return (
+                                <MenuItem key={result.id} value={result}>
+                                    {result.name}
+                                </MenuItem>
+                            );
+                        })
+                    }
+                </TextField>
               </Grid>
+
+                <Grid
+                    item
+                    style={{
+                        width: '100%',
+                        marginTop : '30px'
+                    }}
+                >
+                    <label>Short Code</label>
+                    <TextField
+                        placeholder='Enter ShortCode'
+                        name='shortCode'
+                        value={shortCode}
+                        onChange={(e) => setShortCode(e.target.value)}
+                        variant='outlined'
+                        style={{
+                            width: '300px',
+                        }}
+                    />
+                </Grid>
               <Grid item>
                 <div
                   style={{
@@ -237,7 +307,7 @@ const TopicMasters = () => {
                     }}
                     color='primary'
                     variant='contained'
-                    //   onClick={addDepartment}
+                       onClick={addTopic}
                   >
                     Save
                   </Button>

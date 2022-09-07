@@ -4,7 +4,7 @@ import MaterialTable, {MTableToolbar} from 'material-table';
 import axios from 'axios';
 import Button from '@mui/material/Button';
 import {Card, CardContent, Grid, Modal, TextField} from '@mui/material';
-import Select from '@mui/material/Select/Select';
+//import Select from '@mui/material/Select/Select';
 import MenuItem from '@mui/material/MenuItem';
 //import axios from 'axios';
 //axios.defaults.withCredentials = true;
@@ -13,6 +13,8 @@ const SubCategoryMasters = () => {
   const [data, setData] = useState([]);
   const [name, setName] = useState('');
   const [open, setOpen] = useState(false);
+  const [category, setCategory] = useState([]);
+  const [categoryMaster, setCategoryMaster] = useState('');
 
   const columns = [
     {
@@ -43,9 +45,40 @@ const SubCategoryMasters = () => {
       .then((res) => setData(res));
   };
 
-  useEffect( () => {
-     fetchData();
+  useEffect(() => {
+    async function fetchCategory() {
+      await fetch('http://localhost:8080/api/category-masters')
+        .then((res) => res.json())
+        .then((res) => {
+          console.log(category);
+          setCategory(res);
+        });
+    }
+    fetchData();
+    fetchCategory();
   }, []);
+
+  //Adding a sub-category-master
+  const addSubCategory = (e) => {
+    e.preventDefault();
+    try {
+      console.log(name);
+      console.log(categoryMaster);
+      axios
+        .post('http://localhost:8080/api/sub-category-masters', {
+          name,
+          categoryMaster,
+        })
+        .then((res) => res.data)
+        .then((res) => console.log(res.data));
+      fetchData();
+      setName('');
+      setCategoryMaster('');
+      setOpen(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   //Deleting sub-category-master data
   const deleteData = (id) => {
@@ -69,9 +102,9 @@ const SubCategoryMasters = () => {
 
   return (
     <div>
-        <div>
-            <h3>Sub-Categories</h3>
-        </div>
+      <div>
+        <h3>Sub-Categories</h3>
+      </div>
       <MaterialTable
         title=' '
         columns={columns}
@@ -194,15 +227,28 @@ const SubCategoryMasters = () => {
                   marginTop: '30px',
                 }}
               >
-                <label>Entity Name</label>
+                <label>Select Category</label>
 
-                <Select
+                <TextField
+                  select
+                  value={categoryMaster}
+                  name='categoryMaster'
+                  onChange={(e) => {
+                    setCategoryMaster(e.target.value);
+                    console.log('categoryMaster', categoryMaster);
+                  }}
                   style={{
                     width: '100%',
                   }}
                 >
-                  <MenuItem>Sample Entity</MenuItem>
-                </Select>
+                  {category.map((result) => {
+                    return (
+                      <MenuItem key={result.id} value={result}>
+                        {result.name}
+                      </MenuItem>
+                    );
+                  })}
+                </TextField>
               </Grid>
               <Grid item>
                 <div
@@ -221,7 +267,7 @@ const SubCategoryMasters = () => {
                     }}
                     color='primary'
                     variant='contained'
-                    //   onClick={addDepartment}
+                    onClick={addSubCategory}
                   >
                     Save
                   </Button>

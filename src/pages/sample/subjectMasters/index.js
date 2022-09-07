@@ -4,7 +4,7 @@ import MaterialTable, {MTableToolbar} from 'material-table';
 import Button from '@mui/material/Button';
 import axios from 'axios';
 import {Card, CardContent, Grid, Modal, TextField} from '@mui/material';
-import Select from '@mui/material/Select/Select';
+//import Select from '@mui/material/Select/Select';
 import MenuItem from '@mui/material/MenuItem';
 //import axios from 'axios';
 //axios.defaults.withCredentials = true;
@@ -13,6 +13,8 @@ const SubjectMasters = () => {
   const [data, setData] = useState([]);
   const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
+  const [subCategory, setSubCategory] = useState([]);
+  const [subCategoryMaster, setSubCategoryMaster] = useState('');
 
   const columns = [
     {
@@ -49,9 +51,40 @@ const SubjectMasters = () => {
       .then((res) => setData(res));
   };
 
-  useEffect( () => {
-     fetchData();
+  useEffect(() => {
+    async function fetchSubCategory() {
+      await fetch('http://localhost:8080/api/sub-category-masters')
+        .then((res) => res.json())
+        .then((res) => {
+          console.log(subCategory);
+          setSubCategory(res);
+        });
+    }
+    fetchData();
+    fetchSubCategory();
   }, []);
+
+  //Adding a subject-master
+  const addSubject = (e) => {
+    e.preventDefault();
+    try {
+      console.log(name);
+      console.log(subCategoryMaster);
+      axios
+        .post('http://localhost:8080/api/subject-masters', {
+          name,
+          subCategoryMaster,
+        })
+        .then((res) => res.data)
+        .then((res) => console.log(res.data));
+      fetchData();
+      setName('');
+      setSubCategoryMaster('');
+      setOpen(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   //Deleting subject-master
   const deleteData = (id) => {
@@ -75,9 +108,9 @@ const SubjectMasters = () => {
 
   return (
     <div>
-        <div>
-            <h3>Subjects</h3>
-        </div>
+      <div>
+        <h3>Subjects</h3>
+      </div>
       <MaterialTable
         title=' '
         columns={columns}
@@ -201,15 +234,28 @@ const SubjectMasters = () => {
                   marginTop: '30px',
                 }}
               >
-                <label>Entity Name</label>
+                <label>Select Sub-Category</label>
 
-                <Select
+                <TextField
+                  select
+                  value={subCategoryMaster}
+                  name='subCategoryMaster'
+                  onChange={(e) => {
+                    setSubCategoryMaster(e.target.value);
+                    console.log('subCategoryMaster', subCategoryMaster);
+                  }}
                   style={{
                     width: '100%',
                   }}
                 >
-                  <MenuItem>Sample Entity</MenuItem>
-                </Select>
+                  {subCategory.map((result) => {
+                    return (
+                      <MenuItem key={result.id} value={result}>
+                        {result.name}
+                      </MenuItem>
+                    );
+                  })}
+                </TextField>
               </Grid>
               <Grid item>
                 <div
@@ -228,7 +274,7 @@ const SubjectMasters = () => {
                     }}
                     color='primary'
                     variant='contained'
-                    //   onClick={addDepartment}
+                    onClick={addSubject}
                   >
                     Save
                   </Button>
