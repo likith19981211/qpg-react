@@ -13,6 +13,7 @@ const Page1 = () => {
   const [open, setOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [name, setName] = useState('');
+  const [collegeData, setCollegeData] = useState('');
 
   const columns = [
     {
@@ -78,8 +79,30 @@ const Page1 = () => {
             console.log(res);
                 setEditOpen(true);
                 setName(res.data.name);
-                console.log(res.data.name);
+                console.log(res.data);
+                setCollegeData(res.data);
+
             });
+        setName('');
+    };
+
+    //Editing a college
+    const editCollege = (e) => {
+       axios.put(`http://localhost:8080/api/college-masters`, {
+           id: collegeData.id,
+        name
+       }, {
+           headers: {
+               'Content-Type' : 'application/json'
+           }
+       })
+           .then(res => {
+               res.data;
+           });
+        e.preventDefault();
+
+        setEditOpen(false);
+        fetchData();
     };
 
 
@@ -200,6 +223,7 @@ const Page1 = () => {
               >
                 <TextField
                   placeholder='Enter College Name'
+
                   name='name'
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -314,7 +338,7 @@ const Page1 = () => {
                                     }}
                                     color='primary'
                                     variant='contained'
-                                    onClick={() => console.log(name)}
+                                    onClick={editCollege}
                                 >
                                     Save
                                 </Button>

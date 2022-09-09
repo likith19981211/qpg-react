@@ -15,6 +15,7 @@ const Page2 = () => {
   const [open, setOpen] = useState(false);
   const [college, setCollege] = useState([]);
   const [collegeMaster, setCollegeMaster] = useState('');
+  const [editOpen,setEditOpen] = useState(false);
 
   const columns = [
     {
@@ -99,6 +100,20 @@ const Page2 = () => {
     }
   };
 
+  const getDepartment = (id) => {
+      let did = id.data.id;
+      axios.get(`http://localhost:8080/api/department-masters/${did}`)
+          .then(res => {
+              res.data;
+              console.log(res);
+              console.log(res.data.collegeMaster.name);
+              setEditOpen(true);
+              setName(res.data.name);
+              setCollegeMaster(res.data.collegeMaster);
+              console.log(res.data.name);
+          });
+  };
+
   useEffect(() => {
     async function fetchCollege() {
       await fetch('http://localhost:8080/api/college-masters')
@@ -153,7 +168,7 @@ const Page2 = () => {
                 variant='contained'
                 style={{textTransform: 'none'}}
                 size='small'
-                onClick={() => console.log('edit')}
+                onClick={() => getDepartment(id)}
               >
                 Edit
               </Button>
@@ -303,6 +318,126 @@ const Page2 = () => {
           </CardContent>
         </Card>
       </Modal>
+        <Modal
+            open={editOpen}
+            onClose={() => {
+                setEditOpen(false);
+            }}
+            style={{
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+            }}
+        >
+            <Card
+                sx={{
+                    maxWidth: 370,
+                    minHeight: {xs: 250, sm: 300},
+                    width: '100%',
+                    overflow: 'hidden',
+                    position: 'relative',
+                    display: 'flex',
+                }}
+            >
+                <CardContent>
+                    <Grid
+                        container
+                        style={{
+                            display: 'flex',
+                            marginLeft: '20px',
+                            marginTop: '30px',
+                            marginRight: '10px',
+                        }}
+                    >
+                        <label>Department</label>
+                        <Grid
+                            item
+                            style={{
+                                width: '100%',
+                            }}
+                        >
+                            <TextField
+                                placeholder='Enter College Name'
+                                name='name'
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                variant='outlined'
+                                style={{
+                                    width: '300px',
+                                }}
+                            />
+                        </Grid>
+
+                        <Grid
+                            item
+                            style={{
+                                width: '300px',
+                                marginTop: '30px',
+                            }}
+                        >
+                            <label>College</label>
+
+                            <TextField
+                                select
+                                value={collegeMaster}
+                                name='collegeMaster'
+                                onChange={(e) => {
+                                    setCollegeMaster(e.target.value);
+                                    console.log('collegeMaster', collegeMaster);
+                                }}
+                                style={{
+                                    width: '100%',
+                                }}
+                            >
+                                {college.map((result) => {
+                                    return (
+                                        <MenuItem key={result.id} value={result}>
+                                            {result.name}
+                                        </MenuItem>
+                                    );
+                                })}
+                            </TextField>
+                        </Grid>
+                        <Grid item>
+                            <div
+                                style={{
+                                    marginTop: '30px',
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    justifyContent: 'space-evenly',
+                                }}
+                            >
+                                <Button
+                                    style={{
+                                        height: '40px',
+                                        width: '130px',
+                                        marginRight: '20px',
+                                    }}
+                                    color='primary'
+                                    variant='contained'
+                                    onClick={() => console.log('save clicked')}
+                                >
+                                    Save
+                                </Button>
+                                <Button
+                                    style={{
+                                        height: '40px',
+                                        width: '130px',
+                                        marginLeft: '20px',
+                                    }}
+                                    color='secondary'
+                                    variant='contained'
+                                    onClick={() => setEditOpen(false)}
+                                >
+                                    Cancel
+                                </Button>
+                            </div>
+                        </Grid>
+                    </Grid>
+                </CardContent>
+            </Card>
+        </Modal>
     </div>
   );
 };
