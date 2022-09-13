@@ -33,13 +33,18 @@ const Page1 = () => {
           name,
         })
         .then((res) => res.data)
-        .then((res) => console.log(res.data));
-      setName('');
+        .then((res) => {
+            console.log(res.data);
+            setName('');
+        });
       setOpen(false);
-      fetchData();
+
+
     } catch (error) {
       console.log(error);
     }
+      fetchData();
+
   };
 
   //Fetching College-Masters data
@@ -83,7 +88,7 @@ const Page1 = () => {
                 setCollegeData(res.data);
 
             });
-        setName('');
+
     };
 
     //Editing a college
@@ -98,6 +103,7 @@ const Page1 = () => {
        })
            .then(res => {
                res.data;
+               setName('');
            });
         e.preventDefault();
 
@@ -262,7 +268,11 @@ const Page1 = () => {
                     }}
                     color='secondary'
                     variant='contained'
-                    onClick={() => setOpen(false)}
+                    onClick={() => {
+                        setOpen(false);
+                        setName('');
+                    }
+                    }
                   >
                     Cancel
                   </Button>
@@ -350,7 +360,10 @@ const Page1 = () => {
                                     }}
                                     color='secondary'
                                     variant='contained'
-                                    onClick={() => setEditOpen(false)}
+                                    onClick={() => {
+                                        setEditOpen(false);
+                                        setName('');
+                                    }}
                                 >
                                     Cancel
                                 </Button>

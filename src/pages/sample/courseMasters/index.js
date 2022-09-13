@@ -15,6 +15,7 @@ const Course = () => {
   const [name, setName] = useState('');
   const [department, setDepartment] = useState([]);
   const [departmentMaster, setDepartmentMaster] = useState('');
+  const [editOpen, setEditOpen] = useState(false);
 
   const columns = [
     {
@@ -73,6 +74,18 @@ const Course = () => {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const getCourse = (id) => {
+    let cid = id.data.id;
+    axios
+      .get(`http://localhost:8080/api/course-masters/${cid}`)
+      .then((res) => {
+        res.data;
+        setName(res.data.name);
+        console.log('collegeMaster', res.data.collegeMaster);
+      });
+    setEditOpen(true);
   };
 
   //Deleting course-master
@@ -135,7 +148,7 @@ const Course = () => {
                 variant='contained'
                 style={{textTransform: 'none'}}
                 size='small'
-                onClick={() => console.log('edit')}
+                onClick={() => getCourse(id)}
               >
                 Edit
               </Button>
@@ -275,6 +288,130 @@ const Course = () => {
                     color='secondary'
                     variant='contained'
                     onClick={() => setOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </Grid>
+            </Grid>
+          </CardContent>
+        </Card>
+      </Modal>
+
+      <Modal
+        open={editOpen}
+        onClose={() => {
+          setEditOpen(false);
+        }}
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <Card
+          sx={{
+            maxWidth: 370,
+            minHeight: {xs: 250, sm: 300},
+            width: '100%',
+            overflow: 'hidden',
+            position: 'relative',
+            display: 'flex',
+          }}
+        >
+          <CardContent>
+            <Grid
+              container
+              style={{
+                display: 'flex',
+                marginLeft: '20px',
+                marginTop: '30px',
+                marginRight: '10px',
+              }}
+            >
+              <label>Course</label>
+              <Grid
+                item
+                style={{
+                  width: '100%',
+                }}
+              >
+                <TextField
+                  placeholder='Enter Course Name'
+                  name='name'
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  variant='outlined'
+                  style={{
+                    width: '300px',
+                  }}
+                />
+              </Grid>
+
+              <Grid
+                item
+                style={{
+                  width: '300px',
+                  marginTop: '30px',
+                }}
+              >
+                <label>Department</label>
+
+                <TextField
+                  select
+                  value={departmentMaster}
+                  name='departmentMaster'
+                  onChange={(e) => {
+                    setDepartmentMaster(e.target.value);
+                    console.log('departmentMaster', departmentMaster);
+                  }}
+                  style={{
+                    width: '100%',
+                  }}
+                >
+                  {department.map((result) => {
+                    return (
+                      <MenuItem key={result.id} value={result}>
+                        {result.name}
+                      </MenuItem>
+                    );
+                  })}
+                </TextField>
+              </Grid>
+              <Grid item>
+                <div
+                  style={{
+                    marginTop: '30px',
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'space-evenly',
+                  }}
+                >
+                  <Button
+                    style={{
+                      height: '40px',
+                      width: '130px',
+                      marginRight: '20px',
+                    }}
+                    color='primary'
+                    variant='contained'
+                    onClick={addCourse}
+                  >
+                    Save
+                  </Button>
+                  <Button
+                    style={{
+                      height: '40px',
+                      width: '130px',
+                      marginLeft: '20px',
+                    }}
+                    color='secondary'
+                    variant='contained'
+                    onClick={() => {
+                        setEditOpen(false);
+                        setName('');
+                    }}
                   >
                     Cancel
                   </Button>
