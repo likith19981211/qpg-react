@@ -3,7 +3,7 @@ import React, {useEffect, useState} from 'react';
 import MaterialTable, {MTableToolbar} from 'material-table';
 import Button from '@mui/material/Button';
 import {Card, CardContent, Grid, Modal, TextField} from '@mui/material';
-import Select from '@mui/material/Select/Select';
+//import Select from '@mui/material/Select/Select';
 import MenuItem from '@mui/material/MenuItem';
 import axios from 'axios';
 //import axios from 'axios';
@@ -138,8 +138,8 @@ const QuestionTypeMasters = () => {
       >
         <Card
           sx={{
-            maxWidth: 370,
-            minHeight: {xs: 250, sm: 300},
+            maxWidth: 400,
+            minHeight: {xs: 500, sm: 500},
             width: '100%',
             overflow: 'hidden',
             position: 'relative',
@@ -156,7 +156,7 @@ const QuestionTypeMasters = () => {
                 marginRight: '10px',
               }}
             >
-              <label>Sub-Topic</label>
+              <label>Question-Type</label>
               <Grid
                 item
                 style={{
@@ -170,27 +170,75 @@ const QuestionTypeMasters = () => {
                   onChange={(e) => setName(e.target.value)}
                   variant='outlined'
                   style={{
-                    width: '300px',
+                    width: '330px',
                   }}
                 />
               </Grid>
 
+                <Grid
+                    item
+                    style={{
+                        width: '100%',
+                        marginTop: '30px'
+                    }}
+                >
+                    <label>Short Name</label>
+                    <TextField
+                        placeholder='Enter Short Name'
+                        name='name'
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        variant='outlined'
+                        style={{
+                            width: '330px',
+                        }}
+                    />
+                </Grid>
+
+               <Grid>
+                   <TextField
+                       name='name'
+                       value={name}
+                       onChange={(e) => setName(e.target.value)}
+                       variant='outlined'
+                       label='Default Weightage'
+                       style={{
+                           width: '150px',
+                           marginTop: '30px'
+                       }}
+                   />
+
+                   <TextField
+                       name='name'
+                       value={name}
+                       onChange={(e) => setName(e.target.value)}
+                       variant='outlined'
+                       label='Default Duration'
+                       style={{
+                           width: '150px',
+                           marginTop: '30px',
+                           marginLeft: '25px'
+                       }}
+                   />
+               </Grid>
+
               <Grid
                 item
                 style={{
-                  width: '300px',
+                  width: '330px',
                   marginTop: '30px',
                 }}
               >
-                <label>Entity Name</label>
+                <label>Question Type Category</label>
 
-                <Select
+                <TextField
+                    select
                   style={{
                     width: '100%',
                   }}
                 >
                   <MenuItem>Sample Entity</MenuItem>
-                </Select>
+                </TextField>
               </Grid>
               <Grid item>
                 <div

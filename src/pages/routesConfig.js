@@ -82,6 +82,14 @@ const routesConfig = [
         url: '/sub-topic-masters',
       },
       {
+        id: 'question-type-category',
+        title: 'Question-Type Category',
+        messageId: 'Question-Type Category',
+        type: 'item',
+        icon: <BiAlignLeft />,
+        url: '/question-type-category-masters',
+      },
+      {
         id: 'question-type',
         title: 'Question-Type',
         messageId: 'Question-Types',

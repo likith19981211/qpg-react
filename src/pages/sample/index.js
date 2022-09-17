@@ -21,6 +21,7 @@ const QuestionBluePrintMasters = React.lazy(() =>
   import('./questionBluePrintMasters'),
 );
 const ExamMasters = React.lazy(() => import('./examMasters'));
+const QuestionTypeCategory = React.lazy(() => import('./questionTypeCategoryMasters'));
 
 export const samplePagesConfigs = [
   {
@@ -94,5 +95,9 @@ export const samplePagesConfigs = [
   {
     path: '/exam-masters',
     element: <ExamMasters />,
+  },
+  {
+    path: '/question-type-category-masters',
+    element: <QuestionTypeCategory />,
   },
 ];
