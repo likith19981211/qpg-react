@@ -16,6 +16,7 @@ const Course = () => {
   const [department, setDepartment] = useState([]);
   const [departmentMaster, setDepartmentMaster] = useState('');
   const [editOpen, setEditOpen] = useState(false);
+  const [id, setId] = useState(null);
 
   const columns = [
     {
@@ -83,6 +84,7 @@ const Course = () => {
       .then((res) => {
         res.data;
         setName(res.data.name);
+        setId(cid);
         console.log('collegeMaster', res.data.collegeMaster);
       });
     setEditOpen(true);
@@ -107,6 +109,25 @@ const Course = () => {
       console.log(error);
     }
   };
+
+    const updateCourse = () => {
+        try {
+            axios
+                .put('http://localhost:8080/api/course-masters', {
+                    id,
+                    name,
+                    departmentMaster,
+                })
+                .then((res) => {
+                    res.data;
+                    console.log(res);
+                    setId(null);
+                    setEditOpen(false);
+                });
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
   return (
     <div>
@@ -396,7 +417,7 @@ const Course = () => {
                     }}
                     color='primary'
                     variant='contained'
-                    onClick={addCourse}
+                    onClick={() => updateCourse()}
                   >
                     Save
                   </Button>

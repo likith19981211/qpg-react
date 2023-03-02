@@ -16,6 +16,7 @@ const Page2 = () => {
   const [college, setCollege] = useState([]);
   const [collegeMaster, setCollegeMaster] = useState('');
   const [editOpen, setEditOpen] = useState(false);
+  const [id, setId] = useState(null);
 
   const columns = [
     {
@@ -106,9 +107,29 @@ const Page2 = () => {
         res.data;
         setName(res.data.name);
         setCollegeMaster(res.data.collegeMaster);
+        setId(did);
         console.log('collegeMaster', res.data.collegeMaster);
       });
     setEditOpen(true);
+  };
+
+  const updateDepartment = () => {
+    try {
+      axios
+        .put('http://localhost:8080/api/department-masters', {
+          id,
+          name,
+          collegeMaster,
+        })
+        .then((res) => {
+          res.data;
+          console.log(res);
+          setId(null);
+          setEditOpen(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -235,7 +256,7 @@ const Page2 = () => {
                 }}
               >
                 <TextField
-                  placeholder='Enter College Name'
+                  placeholder='Enter Department Name'
                   name='name'
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -257,7 +278,7 @@ const Page2 = () => {
 
                 <TextField
                   select
-                  defaultValue=""
+                  defaultValue=''
                   value={collegeMaster}
                   name='collegeMaster'
                   onChange={(e) => {
@@ -356,7 +377,7 @@ const Page2 = () => {
                 }}
               >
                 <TextField
-                  placeholder='Enter College Name'
+                  placeholder='Enter Department Name'
                   name='name'
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -378,18 +399,16 @@ const Page2 = () => {
 
                 <TextField
                   select
-                  defaultValue=""
+                  defaultValue={collegeMaster}
                   name='collegeMaster'
                   onChange={(e) => {
                     setCollegeMaster(e.target.value);
-                   // console.log('collegeMaster', collegeMaster);
+                    // console.log('collegeMaster', collegeMaster);
                   }}
                   style={{
                     width: '100%',
                   }}
-
                 >
-                    <MenuItem defaultValue={collegeMaster}>{collegeMaster.name}</MenuItem>
                   {college.map((result) => {
                     return (
                       <MenuItem key={result.id} value={result}>
@@ -416,7 +435,7 @@ const Page2 = () => {
                     }}
                     color='primary'
                     variant='contained'
-                    onClick={() => console.log(collegeMaster)}
+                    onClick={() => updateDepartment()}
                   >
                     Save
                   </Button>

@@ -16,6 +16,7 @@ const SubjectMasters = () => {
   const [subCategory, setSubCategory] = useState([]);
   const [subCategoryMaster, setSubCategoryMaster] = useState('');
   const [editOpen, setEditOpen] = useState(false);
+  const [id, setId] = useState(null);
 
   const columns = [
     {
@@ -94,6 +95,7 @@ const SubjectMasters = () => {
             .then((res) => {
                 res.data;
                 setName(res.data.name);
+                setId(sid);
             });
         setEditOpen(true);
     };
@@ -117,6 +119,25 @@ const SubjectMasters = () => {
       console.log(error);
     }
   };
+
+    const updateSubject = () => {
+        try {
+            axios
+                .put('http://localhost:8080/api/subject-masters', {
+                    id,
+                    name,
+                   subCategoryMaster,
+                })
+                .then((res) => {
+                    res.data;
+                    console.log(res);
+                    setId(null);
+                    setEditOpen(false);
+                });
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
   return (
     <div>
@@ -146,7 +167,7 @@ const SubjectMasters = () => {
                 variant='contained'
                 onClick={() => setOpen(true)}
               >
-                Add Category
+                Add Subject
               </Button>
             </div>
           ),
@@ -407,7 +428,7 @@ const SubjectMasters = () => {
                                     }}
                                     color='primary'
                                     variant='contained'
-                                    onClick={addSubject}
+                                    onClick={() => updateSubject()}
                                 >
                                     Save
                                 </Button>

@@ -16,6 +16,7 @@ const SubSubjectMasters = () => {
   const [subject, setSubject] = useState([]);
   const [subjectMaster, setSubjectMaster] = useState('');
   const [editOpen, setEditOpen] = useState(false);
+  const [id, setId] = useState(null);
 
   const columns = [
     {
@@ -97,6 +98,7 @@ const SubSubjectMasters = () => {
       .then((res) => {
         res.data;
         setName(res.data.name);
+        setId(sid);
       });
     setEditOpen(true);
   };
@@ -120,6 +122,25 @@ const SubSubjectMasters = () => {
       console.log(error);
     }
   };
+
+    const updateSubSubject = () => {
+        try {
+            axios
+                .put('http://localhost:8080/api/sub-subject-masters', {
+                    id,
+                    name,
+                    subjectMaster,
+                })
+                .then((res) => {
+                    res.data;
+                    console.log(res);
+                    setId(null);
+                    setEditOpen(false);
+                });
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
   return (
     <div>
@@ -409,7 +430,7 @@ const SubSubjectMasters = () => {
                     }}
                     color='primary'
                     variant='contained'
-                    onClick={addSubSubject}
+                    onClick={() => updateSubSubject()}
                   >
                     Save
                   </Button>

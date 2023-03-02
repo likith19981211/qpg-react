@@ -16,6 +16,7 @@ const CategoryMasters = () => {
   const [course, setCourse] = useState([]);
   const [courseMaster, setCourseMaster] = useState('');
   const [editOpen, setEditOpen] = useState(false);
+  const [id, setId] = useState(null);
 
   const columns = [
     {
@@ -84,7 +85,7 @@ const CategoryMasters = () => {
               .then((res) => {
                   res.data;
                   setName(res.data.name);
-
+                setId(cid);
               });
           setEditOpen(true);
   };
@@ -108,6 +109,25 @@ const CategoryMasters = () => {
       console.log(error);
     }
   };
+
+    const updateCategory = () => {
+        try {
+            axios
+                .put('http://localhost:8080/api/category-masters', {
+                    id,
+                    name,
+                    courseMaster,
+                })
+                .then((res) => {
+                    res.data;
+                    console.log(res);
+                    setId(null);
+                    setEditOpen(false);
+                });
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
   return (
     <div>
@@ -398,7 +418,7 @@ const CategoryMasters = () => {
                                     }}
                                     color='primary'
                                     variant='contained'
-                                    onClick={addCategory}
+                                    onClick={() => updateCategory()}
                                 >
                                     Save
                                 </Button>

@@ -16,8 +16,9 @@ const QuestionTypeCategory = () => {
   const [weightage, setWeightage] = useState('');
   const [defaultWeightage, setDefaultWeightage] = useState(null);
   const [open, setOpen] = useState(false);
-  const [qtCategoryData, setQtCategoryData] = useState('');
+//  const [qtCategoryData, setQtCategoryData] = useState('');
   const [editOpen, setEditOpen] = useState(false);
+  const [id, setId] = useState(null);
 
   const columns = [
     {
@@ -37,9 +38,9 @@ const QuestionTypeCategory = () => {
   ];
 
   //Adding a question type category
-  const addQuestionTypeCategory = (e) => {
-    e.preventDefault();
-    setDefaultWeightage(parseFloat(weightage));
+  const addQuestionTypeCategory = () => {
+  //  e.preventDefault();
+
     try {
       console.log(name);
         console.log(defaultWeightage);
@@ -59,7 +60,7 @@ const QuestionTypeCategory = () => {
     setName('');
     setShortName('');
     setWeightage('');
-   // setDefaultWeightage(null);
+    setDefaultWeightage(null);
   };
 
   //Fetching question-type-category-masters data
@@ -101,22 +102,21 @@ const QuestionTypeCategory = () => {
         res.data;
         setName(res.data.name);
         setShortName(res.data.shortName);
-        setDefaultWeightage(res.data.defaultWeightage);
-        setQtCategoryData(res.data);
-        setWeightage(String(defaultWeightage));
+        setWeightage((String(res.data.defaultWeightage)));
+        setId(did);
+
       });
     setEditOpen(true);
+
   };
 
-  const editQuestionTypeCategory = (e) => {
-      e.preventDefault();
+  const updateQuestionTypeCategory = () => {
       console.log("defaultWeightage", defaultWeightage);
-      setDefaultWeightage(parseFloat(weightage));
    try {
        console.log("defaultWeightage", defaultWeightage);
        axios
            .put('http://localhost:8080/api/question-type-category-masters', {
-               id: qtCategoryData.id,
+               id,
                name,
                shortName,
                defaultWeightage,
@@ -125,6 +125,7 @@ const QuestionTypeCategory = () => {
                setName('');
                setShortName('');
                setWeightage('');
+               setDefaultWeightage(null);
                setEditOpen(false);
                res.data;
            });
@@ -310,7 +311,11 @@ const QuestionTypeCategory = () => {
                     }}
                     color='primary'
                     variant='contained'
-                    onClick={addQuestionTypeCategory}
+                    onClick={() => {
+                        setDefaultWeightage(parseFloat(weightage));
+                        addQuestionTypeCategory();
+                    }
+                    }
                   >
                     Save
                   </Button>
@@ -406,6 +411,7 @@ const QuestionTypeCategory = () => {
                   value={weightage}
                   onChange={(e) => {
                     setWeightage(e.target.value);
+                    setDefaultWeightage(parseFloat(e.target.value));
                   }
                 }
                   variant='outlined'
@@ -436,7 +442,7 @@ const QuestionTypeCategory = () => {
                     }}
                     color='primary'
                     variant='contained'
-                    onClick={editQuestionTypeCategory}
+                    onClick={() => updateQuestionTypeCategory()}
                   >
                     Save
                   </Button>

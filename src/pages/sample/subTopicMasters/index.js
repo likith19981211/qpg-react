@@ -15,6 +15,7 @@ const SubTopicMasters = () => {
   const [topic, setTopic] = useState([]);
   const [topicMaster, setTopicMaster] = useState('');
   const [editOpen, setEditOpen] = useState(false);
+  const [id,setId] = useState(null);
 
   const columns = [
     {
@@ -107,6 +108,7 @@ const SubTopicMasters = () => {
             .then((res) => {
                 res.data;
                 setName(res.data.name);
+                setId(sid);
             });
         setEditOpen(true);
     };
@@ -131,9 +133,30 @@ const SubTopicMasters = () => {
     }
   };
 
+    const updateSubTopic = () => {
+        try {
+            axios
+                .put('http://localhost:8080/api/sub-topic-masters', {
+                    id,
+                    name,
+                   topicMaster,
+                })
+                .then((res) => {
+                    res.data;
+                    console.log(res);
+                    setId(null);
+                    setEditOpen(false);
+                });
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
   return (
     <div>
+        <div>
+            <h3>Sub-Topics</h3>
+        </div>
       <MaterialTable
         title=' '
         columns={columns}
@@ -422,7 +445,7 @@ const SubTopicMasters = () => {
                                     }}
                                     color='primary'
                                     variant='contained'
-                                    onClick={addSubTopic}
+                                    onClick={() => updateSubTopic()}
                                 >
                                     Save
                                 </Button>

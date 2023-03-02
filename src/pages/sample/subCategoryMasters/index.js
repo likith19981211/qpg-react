@@ -16,6 +16,7 @@ const SubCategoryMasters = () => {
   const [category, setCategory] = useState([]);
   const [categoryMaster, setCategoryMaster] = useState('');
   const [editOpen, setEditOpen] = useState(false);
+  const [id, setId] = useState(null);
 
   const columns = [
     {
@@ -88,6 +89,7 @@ const SubCategoryMasters = () => {
       .then((res) => {
         res.data;
         setName(res.data.name);
+        setId(cid);
       });
     setEditOpen(true);
   };
@@ -111,6 +113,25 @@ const SubCategoryMasters = () => {
       console.log(error);
     }
   };
+
+    const updateSubCategory = () => {
+        try {
+            axios
+                .put('http://localhost:8080/api/sub-category-masters', {
+                    id,
+                    name,
+                    categoryMaster,
+                })
+                .then((res) => {
+                    res.data;
+                    console.log(res);
+                    setId(null);
+                    setEditOpen(false);
+                });
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
   return (
     <div>
@@ -400,7 +421,7 @@ const SubCategoryMasters = () => {
                     }}
                     color='primary'
                     variant='contained'
-                    onClick={addSubCategory}
+                    onClick={() => updateSubCategory()}
                   >
                     Save
                   </Button>

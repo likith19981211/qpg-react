@@ -17,6 +17,7 @@ const TopicMasters = () => {
   const [subSubjectMaster, setSubSubjectMaster] = useState('');
   const [shortCode, setShortCode] = useState('');
   const [editOpen, setEditOpen] = useState(false);
+  const [id,setId] = useState(null);
 
   const columns = [
     {
@@ -105,6 +106,7 @@ const TopicMasters = () => {
       res.data;
       setName(res.data.name);
       setShortCode(res.data.shortCode);
+      setId(sid);
     });
     setEditOpen(true);
   };
@@ -128,6 +130,26 @@ const TopicMasters = () => {
       console.log(error);
     }
   };
+
+    const updateTopic = () => {
+        try {
+            axios
+                .put('http://localhost:8080/api/topic-masters', {
+                    id,
+                    name,
+                    subSubjectMaster,
+                    shortCode
+                })
+                .then((res) => {
+                    res.data;
+                    console.log(res);
+                    setId(null);
+                    setEditOpen(false);
+                });
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
   return (
     <div>
@@ -457,7 +479,7 @@ const TopicMasters = () => {
                     }}
                     color='primary'
                     variant='contained'
-                    onClick={addTopic}
+                    onClick={() => updateTopic()}
                   >
                     Save
                   </Button>

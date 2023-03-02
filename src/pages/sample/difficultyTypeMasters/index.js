@@ -13,6 +13,9 @@ const DifficultyTypeMasters = () => {
   const [data, setData] = useState([]);
   const [name, setName] = useState('');
   const [open, setOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  //  const [difficultyTypeData, setDifficultyTypeData] = useState('');
+  const [id, setId] = useState(null);
 
   const columns = [
     {
@@ -31,28 +34,65 @@ const DifficultyTypeMasters = () => {
       .then((res) => setData(res));
   };
 
-  useEffect( () => {
-     fetchData();
+  useEffect(() => {
+    fetchData();
   }, []);
 
-    //Add a difficulty-type
-    const addDifficultyType = (e) => {
-        e.preventDefault();
-        try {
-            console.log(name);
-            axios
-                .post('http://localhost:8080/api/difficulty-type-masters', {
-                    name,
-                })
-                .then((res) => res.data)
-                .then((res) => console.log(res.data));
-            setName('');
-            setOpen(false);
-            fetchData();
-        } catch (error) {
-            console.log(error);
-        }
-    };
+  //Add a difficulty-type
+  const addDifficultyType = (e) => {
+    e.preventDefault();
+    try {
+      console.log(name);
+      axios
+        .post('http://localhost:8080/api/difficulty-type-masters', {
+          name,
+        })
+        .then((res) => res.data)
+        .then((res) => console.log(res.data));
+      setName('');
+      setOpen(false);
+      fetchData();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  //Fetching individual difficulty type
+  const getDifficultyType = (id) => {
+    let did = id.data.id;
+    axios
+      .get(`http://localhost:8080/api/difficulty-type-masters/${did}`)
+      .then((res) => {
+        res.data;
+        setName(res.data.name);
+        setId(did);
+      });
+    setEditOpen(true);
+  };
+
+  //post updated difficulty type
+  const updateDifficultyType = () => {
+    axios
+      .put(
+        `http://localhost:8080/api/difficulty-type-masters`,
+        {
+          id,
+          name,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      )
+      .then((res) => {
+        res.data;
+        setName('');
+      });
+
+    setEditOpen(false);
+    fetchData();
+  };
 
   //Deleting difficulty-type-master
   const deleteData = (id) => {
@@ -76,6 +116,9 @@ const DifficultyTypeMasters = () => {
 
   return (
     <div>
+      <div>
+        <h3>Difficulty Types</h3>
+      </div>
       <MaterialTable
         title=' '
         columns={columns}
@@ -111,7 +154,7 @@ const DifficultyTypeMasters = () => {
                 variant='contained'
                 style={{textTransform: 'none'}}
                 size='small'
-                onClick={() => console.log('edit')}
+                onClick={() => getDifficultyType(id)}
               >
                 Edit
               </Button>
@@ -208,7 +251,7 @@ const DifficultyTypeMasters = () => {
                     }}
                     color='primary'
                     variant='contained'
-                       onClick={addDifficultyType}
+                    onClick={addDifficultyType}
                   >
                     Save
                   </Button>
@@ -221,6 +264,99 @@ const DifficultyTypeMasters = () => {
                     color='secondary'
                     variant='contained'
                     onClick={() => setOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </Grid>
+            </Grid>
+          </CardContent>
+        </Card>
+      </Modal>
+      <Modal
+        open={editOpen}
+        onClose={() => {
+          setEditOpen(false);
+        }}
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <Card
+          sx={{
+            maxWidth: 370,
+            minHeight: {xs: 150, sm: 250},
+            width: '100%',
+            overflow: 'hidden',
+            position: 'relative',
+            display: 'flex',
+          }}
+        >
+          <CardContent>
+            <Grid
+              container
+              style={{
+                display: 'flex',
+                marginLeft: '20px',
+                marginTop: '30px',
+                marginRight: '10px',
+              }}
+            >
+              <label>Difficulty-Type</label>
+              <Grid
+                item
+                style={{
+                  width: '100%',
+                }}
+              >
+                <TextField
+                  placeholder='Enter Difficulty-Type'
+                  name='name'
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  variant='outlined'
+                  style={{
+                    width: '300px',
+                  }}
+                />
+              </Grid>
+
+              <Grid item>
+                <div
+                  style={{
+                    marginTop: '30px',
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'space-evenly',
+                  }}
+                >
+                  <Button
+                    style={{
+                      height: '40px',
+                      width: '130px',
+                      marginRight: '20px',
+                    }}
+                    color='primary'
+                    variant='contained'
+                    onClick={() => updateDifficultyType()}
+                  >
+                    Save
+                  </Button>
+                  <Button
+                    style={{
+                      height: '40px',
+                      width: '130px',
+                      marginLeft: '20px',
+                    }}
+                    color='secondary'
+                    variant='contained'
+                    onClick={() => {
+                      setEditOpen(false);
+                      setName('');
+                    }}
                   >
                     Cancel
                   </Button>
